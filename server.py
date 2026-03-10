@@ -5,7 +5,6 @@ from scipy.stats import norm
 import sqlite3
 from fastapi import FastAPI
 import yfinance as yf
-import pandas_ta as ta
 
 tool_schemas = {
     "get_live_price": {"params": ["symbol"]},
@@ -241,7 +240,7 @@ def scan_market():
         if df.empty:
             continue
 
-        df["RSI"] = ta.rsi(df["Close"], length=14)
+        df["RSI"] = calculate_rsi(df["Close"], length=14)
         rsi = df["RSI"].iloc[-1]
 
         if rsi < 30:
@@ -486,3 +485,16 @@ def homepage():
 
     with open("index.html") as f:
         return f.read()
+    
+def calculate_rsi(data, period=14):
+    delta = data.diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+
+    avg_gain = gain.rolling(period).mean()
+    avg_loss = loss.rolling(period).mean()
+
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+
+    return rsi
