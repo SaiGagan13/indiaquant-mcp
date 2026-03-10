@@ -3,6 +3,5 @@ uvicorn
 yfinance
 pandas
 numpy
-pandas-ta
 requests
 scipy
