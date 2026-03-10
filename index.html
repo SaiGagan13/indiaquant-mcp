@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IndiaQuant AI Stock Assistant</title>
+
+<style>
+body{
+font-family: Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+.container{
+width:600px;
+margin:auto;
+padding:30px;
+}
+
+input{
+padding:10px;
+width:200px;
+}
+
+button{
+padding:10px 15px;
+background:#22c55e;
+border:none;
+color:white;
+cursor:pointer;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+margin-top:20px;
+border-radius:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>IndiaQuant AI Stock Assistant</h1>
+
+<input id="symbol" placeholder="Enter Stock (RELIANCE)">
+<button onclick="getPrice()">Get Live Price</button>
+
+<div class="card" id="price"></div>
+
+<button onclick="getSignal()">Generate Signal</button>
+
+<div class="card" id="signal"></div>
+
+<button onclick="scanMarket()">Scan Market</button>
+
+<div class="card" id="scan"></div>
+
+</div>
+
+<script>
+
+async function getPrice(){
+
+let symbol=document.getElementById("symbol").value;
+
+let res=await fetch(`/get_live_price?symbol=${symbol}`);
+let data=await res.json();
+
+document.getElementById("price").innerHTML =
+"Price: \u20B9 " + Number(data.price).toFixed(2) + "<br>Volume: " + data.volume;
+
+}
+
+async function getSignal(){
+
+let symbol=document.getElementById("symbol").value;
+
+let res=await fetch(`/generate_signal?symbol=${symbol}`);
+let data=await res.json();
+
+document.getElementById("signal").innerHTML =
+"Signal: " + data.signal + "<br>Confidence: " + data.confidence + "%";
+
+}
+
+async function scanMarket(){
+
+let res=await fetch(`/scan_market`);
+let data=await res.json();
+
+document.getElementById("scan").innerHTML =
+JSON.stringify(data,null,2);
+
+}
+
+</script>
+
+</body>
+</html>
